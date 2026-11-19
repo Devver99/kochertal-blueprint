@@ -19,9 +19,9 @@ export function EventCard({
   return (
     <article
       id={event.slug}
-      className={`flex flex-col gap-4 sm:flex-row sm:gap-7 ${muted ? "opacity-80" : ""}`}
+      className="flex scroll-mt-8 flex-col gap-4 sm:flex-row sm:gap-7"
     >
-      <EventDate event={event} />
+      <EventDate event={event} muted={muted} />
       <div className="min-w-0">
         <Heading className="text-xl text-ink sm:text-2xl">{event.title}</Heading>
         <dl className="mt-2 grid gap-x-3 gap-y-1 sm:grid-cols-[auto_1fr]">
