@@ -1,0 +1,21 @@
+{
+  "industries": [
+    { "id": "bau-trockenbau", "label": "Bau & Trockenbau" },
+    { "id": "stuckateur-maler", "label": "Stuckateur & Maler" },
+    { "id": "tueren-fenster-montage", "label": "Türen, Fenster & Montage" },
+    { "id": "elektro-haustechnik", "label": "Elektro & Haustechnik" },
+    { "id": "kfz", "label": "Kfz & Reifen" },
+    { "id": "friseur-kosmetik", "label": "Friseur & Kosmetik" },
+    { "id": "gesundheit", "label": "Gesundheit" },
+    { "id": "lebensmittel-gastronomie", "label": "Lebensmittel & Gastronomie" },
+    { "id": "einzelhandel", "label": "Einzelhandel" },
+    { "id": "beratung-dienstleistung", "label": "Beratung & Dienstleistung" },
+    { "id": "wein-landwirtschaft", "label": "Wein & Landwirtschaft" }
+  ],
+  "districts": [
+    { "id": "forchtenberg", "label": "Forchtenberg" },
+    { "id": "ernsbach", "label": "Ernsbach" },
+    { "id": "sindringen", "label": "Sindringen" },
+    { "id": "wohlmuthausen", "label": "Wohlmuthausen" }
+  ]
+}
