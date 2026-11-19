@@ -4,7 +4,7 @@
  * diese Datei ausgetauscht – die Signaturen sind bereits async.
  */
 import membersData from "@/data/members.json";
-import { normalizeSearch } from "@/lib/format";
+import { normalizeSearch, searchIndexText } from "@/lib/format";
 import { districtLabel, industryLabel } from "./taxonomies";
 import type { Member, MemberFilters, MemberView } from "./types";
 
@@ -35,7 +35,7 @@ const allMembers: MemberView[] = members
 const searchIndex = new Map(
   allMembers.map((m) => [
     m.id,
-    normalizeSearch(
+    searchIndexText(
       [m.name, m.owner, m.tagline, m.industryLabel, m.districtLabel, ...m.services]
         .filter(Boolean)
         .join(" "),

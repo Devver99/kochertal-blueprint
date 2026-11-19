@@ -77,11 +77,30 @@ export function displayUrl(url: string) {
   return url.replace(/^https?:\/\//, "").replace(/\/$/, "");
 }
 
-/** Normalisiert Suchtext: klein, ohne Akzente, ß → ss. */
+const UMLAUTS: Record<string, string> = { ä: "ae", ö: "oe", ü: "ue" };
+
+function stripAccents(text: string) {
+  return text.normalize("NFD").replace(/\p{Diacritic}/gu, "");
+}
+
+/**
+ * Normalisiert Suchtext: klein, ß → ss, Umlaute → ae/oe/ue.
+ * „Böttcher“ und „boettcher“ ergeben beide „boettcher“.
+ */
 export function normalizeSearch(text: string) {
-  return text
-    .toLocaleLowerCase(LOCALE)
-    .replace(/ß/g, "ss")
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "");
+  return stripAccents(
+    text
+      .toLocaleLowerCase(LOCALE)
+      .replace(/ß/g, "ss")
+      .replace(/[äöü]/g, (c) => UMLAUTS[c]),
+  );
+}
+
+/**
+ * Suchindex für einen Text: enthält beide Schreibweisen, damit auch
+ * „bottcher“ (Umlaut ohne e getippt) noch trifft.
+ */
+export function searchIndexText(text: string) {
+  const lower = text.toLocaleLowerCase(LOCALE).replace(/ß/g, "ss");
+  return `${normalizeSearch(lower)} ${stripAccents(lower)}`;
 }
