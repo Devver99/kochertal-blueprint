@@ -57,3 +57,17 @@ export async function getNextEvent(): Promise<Event | null> {
   const { upcoming } = await getEventSchedule();
   return upcoming[0] ?? null;
 }
+
+/**
+ * Termine für die Startseite: der nächste hervorgehobene Termin
+ * (`featured`), sonst der nächste überhaupt – dazu die übrigen
+ * bevorstehenden Termine in zeitlicher Reihenfolge.
+ */
+export async function getHighlightedEvents(): Promise<{
+  highlight: Event | null;
+  more: Event[];
+}> {
+  const { upcoming } = await getEventSchedule();
+  const highlight = upcoming.find((e) => e.featured) ?? upcoming[0] ?? null;
+  return { highlight, more: upcoming.filter((e) => e !== highlight) };
+}

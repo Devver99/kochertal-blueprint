@@ -65,6 +65,8 @@ export type Event = {
   /** Ganztägig: keine Uhrzeit anzeigen. */
   allDay?: boolean;
   location: { name: string; address?: string };
+  /** Auf der Startseite groß hervorheben (statt einfach des nächsten Termins). */
+  featured?: boolean;
   isExample?: boolean;
 };
 

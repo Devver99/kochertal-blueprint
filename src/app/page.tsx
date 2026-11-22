@@ -7,15 +7,14 @@ import { MemberCard } from "@/components/modules/members/member-card";
 import { MemberQuickSearch } from "@/components/modules/members/member-quick-search";
 import { Container } from "@/components/ui/container";
 import { siteConfig } from "@/config/site";
-import { getEventSchedule } from "@/lib/content/events";
+import { getHighlightedEvents } from "@/lib/content/events";
 import { getFeaturedMembers } from "@/lib/content/members";
 
 export default async function HomePage() {
-  const [{ upcoming }, featured] = await Promise.all([
-    getEventSchedule(),
+  const [{ highlight, more }, featured] = await Promise.all([
+    getHighlightedEvents(),
     getFeaturedMembers(3),
   ]);
-  const [next = null, ...more] = upcoming;
 
   return (
     <>
@@ -35,7 +34,7 @@ export default async function HomePage() {
         </p>
       </Hero>
 
-      <EventTeaser next={next} more={more.slice(0, 2)} />
+      <EventTeaser highlight={highlight} more={more.slice(0, 2)} />
 
       <Features
         title="Was der Verein für seine Mitglieder tut"

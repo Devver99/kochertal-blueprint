@@ -4,15 +4,15 @@ import { Container } from "@/components/ui/container";
 import { EventDateText } from "@/components/ui/event-date";
 import { EventCard } from "./event-card";
 
-/** Nächster Termin groß, danach die folgenden Termine kompakt. */
+/** Hervorgehobener Termin groß, daneben weitere Termine kompakt. */
 export function EventTeaser({
-  title = "Nächste Veranstaltung",
-  next,
+  title = "Veranstaltungen",
+  highlight,
   more = [],
   allHref = "/veranstaltungen",
 }: {
   title?: string;
-  next: Event | null;
+  highlight: Event | null;
   more?: Event[];
   allHref?: string;
 }) {
@@ -23,14 +23,14 @@ export function EventTeaser({
           {title}
         </h2>
 
-        {next ? (
+        {highlight ? (
           <div className="mt-8 grid gap-10 lg:grid-cols-[1.6fr_1fr] lg:gap-16">
             <div className="rounded-sign border-2 border-kocher p-5 sm:p-8">
-              <EventCard event={next} />
+              <EventCard event={highlight} />
             </div>
             {more.length > 0 ? (
               <div>
-                <h3 className="text-lg text-ink">Danach</h3>
+                <h3 className="text-lg text-ink">Weitere Termine</h3>
                 <ul className="mt-3 divide-y divide-line border-y border-line">
                   {more.map((event) => (
                     <li key={event.id} className="py-4">
