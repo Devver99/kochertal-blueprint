@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { MemberDirectory } from "@/components/modules/members/member-directory";
 import { PageHeader } from "@/components/sections/page-header";
 import { Container } from "@/components/ui/container";
 import { isDistrict, isIndustry } from "@/lib/content/taxonomies";
 import type { MemberFilters } from "@/lib/content/types";
+
+/**
+ * Blockierende Route: Die Seite wartet auf die Filter aus der URL und
+ * liefert die fertige Trefferliste als HTML. Mit einem Suspense-Fallback
+ * käme die gefilterte Liste nur per Inline-Skript nachgestreamt – ohne
+ * JavaScript bliebe dann das ungefilterte Verzeichnis stehen.
+ */
+export const instant = false;
 
 export const metadata: Metadata = {
   title: "Mitglieder",
@@ -30,16 +37,8 @@ function parseFilters(params: SearchParams): MemberFilters {
   };
 }
 
-async function FilteredDirectory({
-  searchParams,
-}: {
-  searchParams: Promise<SearchParams>;
-}) {
+export default async function MembersPage({ searchParams }: PageProps<"/mitglieder">) {
   const filters = parseFilters(await searchParams);
-  return <MemberDirectory filters={filters} />;
-}
-
-export default function MembersPage({ searchParams }: PageProps<"/mitglieder">) {
   return (
     <>
       <PageHeader
@@ -47,13 +46,7 @@ export default function MembersPage({ searchParams }: PageProps<"/mitglieder">) 
         lead="Handwerk, Handel und Dienstleistung aus Forchtenberg, Ernsbach, Sindringen und Wohlmuthausen. Suchen Sie nach Namen oder Leistung, oder filtern Sie nach Branche und Ortsteil."
       />
       <Container className="py-10 sm:py-14">
-        {/*
-          Die Filter hängen von der URL ab und werden pro Anfrage gerendert.
-          Bis dahin zeigt das statische Grundgerüst das vollständige Verzeichnis.
-        */}
-        <Suspense fallback={<MemberDirectory filters={{}} />}>
-          <FilteredDirectory searchParams={searchParams} />
-        </Suspense>
+        <MemberDirectory filters={filters} />
       </Container>
     </>
   );

@@ -1,8 +1,8 @@
 "use client";
 
-import Form from "next/form";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState, useTransition } from "react";
 import type { MemberFilters, TaxonomyTerm } from "@/lib/content/types";
 import { Button } from "@/components/ui/button";
 import { inputClasses, labelClasses, selectClasses } from "@/components/ui/form-styles";
@@ -11,16 +11,39 @@ export type FilterOption = TaxonomyTerm & { count: number };
 
 type Values = { q: string; branche: string; ortsteil: string };
 
+/** Wartezeit nach dem letzten Tastendruck, bevor die Suche läuft. */
+const SEARCH_DELAY_MS = 300;
+
 const toValues = (filters: MemberFilters): Values => ({
   q: filters.query ?? "",
   branche: filters.industry ?? "",
   ortsteil: filters.district ?? "",
 });
 
+/** Gleiche Normalisierung wie parseFilters() auf der Seite. */
+const normalize = (values: Values): Values => ({
+  ...values,
+  q: values.q.trim().slice(0, 80),
+});
+
+const keyOf = (values: Values) => JSON.stringify(normalize(values));
+
+function toHref(action: string, values: Values) {
+  const params = new URLSearchParams();
+  for (const [name, value] of Object.entries(normalize(values))) {
+    if (value) params.set(name, value);
+  }
+  const query = params.toString();
+  return query ? `${action}?${query}` : action;
+}
+
 /**
- * Such- und Filterformular. Ein normales GET-Formular – die Filter stehen
- * in der URL und lassen sich teilen. Mit JavaScript navigiert next/form
- * ohne Neuladen; der Fokus bleibt dabei erhalten.
+ * Such- und Filterformular.
+ *
+ * Ohne JavaScript ein normales GET-Formular. Mit JavaScript aktualisiert
+ * jede Änderung sofort die Liste: Die Filter werden per router.replace in
+ * die URL geschrieben (teilbar, ohne neue Verlaufseinträge), die Seite
+ * liest sie serverseitig aus `searchParams` und rendert die Treffer neu.
  */
 export function MemberFilterForm({
   action,
@@ -33,25 +56,66 @@ export function MemberFilterForm({
   industries: FilterOption[];
   districts: FilterOption[];
 }) {
+  const router = useRouter();
+  const [, startTransition] = useTransition();
   const [values, setValues] = useState(() => toValues(filters));
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  // Ändert sich die URL (z. B. über „Filter zurücksetzen“), Felder angleichen.
-  const urlKey = JSON.stringify(toValues(filters));
+  // Zuletzt von hier angeforderter Filterstand.
+  const urlKey = keyOf(toValues(filters));
+  const [requestedKey, setRequestedKey] = useState(urlKey);
   const [syncedKey, setSyncedKey] = useState(urlKey);
+
+  // Hat sich die URL von außen geändert (Zurücksetzen-Link, Zurück-Taste),
+  // Felder angleichen. Eigene Navigationen überschreiben nie, was gerade
+  // getippt wird.
   if (urlKey !== syncedKey) {
     setSyncedKey(urlKey);
-    setValues(toValues(filters));
+    if (urlKey !== requestedKey) {
+      setRequestedKey(urlKey);
+      setValues(toValues(filters));
+    }
   }
 
-  const set = (name: keyof Values) => (
-    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => setValues((prev) => ({ ...prev, [name]: event.target.value }));
+  useEffect(() => () => clearTimeout(timer.current), []);
+
+  function apply(next: Values) {
+    clearTimeout(timer.current);
+    const key = keyOf(next);
+    if (key === requestedKey) return;
+    setRequestedKey(key);
+    startTransition(() => {
+      router.replace(toHref(action, next), { scroll: false });
+    });
+  }
+
+  function onSearchChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const next = { ...values, q: event.target.value };
+    setValues(next);
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => apply(next), SEARCH_DELAY_MS);
+  }
+
+  function onSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
+    const name = event.target.name as "branche" | "ortsteil";
+    const next = { ...values, [name]: event.target.value };
+    setValues(next);
+    apply(next);
+  }
+
+  function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    // Enter im Suchfeld: sofort anwenden statt Seite neu zu laden.
+    event.preventDefault();
+    apply(values);
+  }
 
   const active = Boolean(filters.query || filters.industry || filters.district);
 
   return (
-    <Form
+    <form
       action={action}
+      method="get"
+      onSubmit={onSubmit}
       role="search"
       aria-label="Mitglieder suchen und filtern"
       className="grid gap-4 rounded-sign border-2 border-line bg-white p-5 sm:p-6 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_auto] lg:items-end"
@@ -65,7 +129,7 @@ export function MemberFilterForm({
           name="q"
           type="search"
           value={values.q}
-          onChange={set("q")}
+          onChange={onSearchChange}
           autoComplete="off"
           placeholder="z. B. Friseur, Heizung, Wein"
           className={inputClasses}
@@ -80,7 +144,7 @@ export function MemberFilterForm({
           id="filter-branche"
           name="branche"
           value={values.branche}
-          onChange={set("branche")}
+          onChange={onSelectChange}
           className={selectClasses}
         >
           <option value="">Alle Branchen</option>
@@ -100,7 +164,7 @@ export function MemberFilterForm({
           id="filter-ortsteil"
           name="ortsteil"
           value={values.ortsteil}
-          onChange={set("ortsteil")}
+          onChange={onSelectChange}
           className={selectClasses}
         >
           <option value="">Alle Ortsteile</option>
@@ -113,6 +177,7 @@ export function MemberFilterForm({
       </div>
 
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2 md:col-span-2 lg:col-span-1">
+        {/* Ohne JavaScript nötig; mit JavaScript wirkt jede Änderung sofort. */}
         <Button type="submit" variant="secondary" className="w-full sm:w-auto">
           Betriebe anzeigen
         </Button>
@@ -125,6 +190,6 @@ export function MemberFilterForm({
           </Link>
         ) : null}
       </div>
-    </Form>
+    </form>
   );
 }
