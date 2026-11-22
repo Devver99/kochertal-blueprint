@@ -14,6 +14,8 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
+  // Gilt für alle Seiten; Seiten mit eigenem `robots` bleiben ebenfalls noindex.
+  ...(siteConfig.noindex && { robots: { index: false, follow: false } }),
 };
 
 export const viewport: Viewport = {

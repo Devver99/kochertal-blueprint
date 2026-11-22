@@ -21,6 +21,12 @@ export const siteConfig = {
   timeZone: "Europe/Berlin",
   /** Wird für absolute URLs (Metadata, Sitemap) verwendet. */
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  /**
+   * Suchmaschinen aussperren (Meta-Tag `robots` und Header `X-Robots-Tag`
+   * auf allen Seiten). Bleibt an, solange die Seite eine Demo oder
+   * Vorschau ist – erst für den echten Livegang auf `false` setzen.
+   */
+  noindex: true,
   /** Hinweis im Footer, solange die Seite eine Demo mit fiktiven Inhalten ist. */
   demoNotice:
     "Demo-Website. Mit „(Beispiel)“ markierte Betriebe und Termine sind frei erfunden.",
