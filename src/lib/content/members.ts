@@ -36,7 +36,7 @@ const searchIndex = new Map(
   allMembers.map((m) => [
     m.id,
     searchIndexText(
-      [m.name, m.owner, m.tagline, m.industryLabel, m.districtLabel, ...m.services]
+      [m.name, m.owner, m.tagline, m.industryLabel, m.districtLabel, ...(m.services ?? [])]
         .filter(Boolean)
         .join(" "),
     ),

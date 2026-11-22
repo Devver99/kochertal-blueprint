@@ -16,6 +16,7 @@ function ContactRow({ label, children }: { label: string; children: React.ReactN
 /** Profilseite eines Mitgliedsbetriebs. */
 export function MemberProfile({ member }: { member: MemberView }) {
   const { contact, address } = member;
+  const services = member.services ?? [];
   const hasContact = Boolean(contact.phone || contact.email || contact.website);
 
   return (
@@ -72,23 +73,25 @@ export function MemberProfile({ member }: { member: MemberView }) {
             </p>
           ) : null}
 
-          <section aria-labelledby="about-title">
-            <h2 id="about-title" className="text-2xl text-kocher">
-              Über den Betrieb
-            </h2>
-            <p className="mt-3 max-w-[65ch] text-lg">{member.description}</p>
-            {member.owner ? (
-              <p className="mt-3 text-muted">Inhaber: {member.owner}</p>
-            ) : null}
-          </section>
-
-          {member.services.length > 0 ? (
-            <section aria-labelledby="services-title">
-              <h2 id="services-title" className="text-2xl text-kocher">
-                Leistungen
+          {member.description ? (
+            <section aria-labelledby="about-title">
+              <h2 id="about-title" className="text-2xl text-kocher">
+                Über den Betrieb
               </h2>
+              <p className="mt-3 max-w-[65ch] text-lg">{member.description}</p>
+              {member.owner ? (
+                <p className="mt-3 text-muted">Inhaber: {member.owner}</p>
+              ) : null}
+            </section>
+          ) : null}
+
+          <section aria-labelledby="services-title">
+            <h2 id="services-title" className="text-2xl text-kocher">
+              Leistungen
+            </h2>
+            {services.length > 0 ? (
               <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-                {member.services.map((service) => (
+                {services.map((service) => (
                   <li
                     key={service}
                     className="flex items-start gap-3 rounded-sign border border-line bg-white px-4 py-3"
@@ -112,8 +115,12 @@ export function MemberProfile({ member }: { member: MemberView }) {
                   </li>
                 ))}
               </ul>
-            </section>
-          ) : null}
+            ) : (
+              <p className="mt-3 text-lg text-muted">
+                Leistungen ergänzt der Betrieb in Kürze.
+              </p>
+            )}
+          </section>
         </div>
 
         <aside aria-labelledby="contact-title" className="self-start rounded-sign border-2 border-kocher bg-white p-5 sm:p-6">

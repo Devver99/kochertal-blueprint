@@ -20,7 +20,7 @@ export async function generateMetadata({
   if (!member) return {};
   return {
     title: member.name,
-    description: `${member.tagline} – ${member.industryLabel} in ${member.districtLabel}. Mitglied im Gewerbeverein Forchtenberg.`,
+    description: `${member.tagline ? `${member.tagline} – ` : ""}${member.industryLabel} in ${member.districtLabel}. Mitglied im Gewerbeverein Forchtenberg.`,
   };
 }
 

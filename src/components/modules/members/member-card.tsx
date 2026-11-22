@@ -27,7 +27,7 @@ export function MemberCard({
           </Link>
         </Heading>
         <p className="mt-1 font-bold text-ink">{member.industryLabel}</p>
-        <p className="text-muted">{member.tagline}</p>
+        {member.tagline ? <p className="text-muted">{member.tagline}</p> : null}
         <p className="mt-2 text-muted">
           {member.address.street}, {member.districtLabel}
         </p>

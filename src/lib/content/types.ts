@@ -24,14 +24,18 @@ export type Member = {
   slug: string;
   name: string;
   owner?: string;
-  /** Kurzer Satz für Karten und Listen. */
-  tagline: string;
-  description: string;
+  /**
+   * Kurzer Satz für Karten und Listen. Wie `description`, `owner` und
+   * `services` optional: Bei echten Betrieben steht nur drin, was der
+   * Betrieb selbst geliefert hat.
+   */
+  tagline?: string;
+  description?: string;
   /** Referenz auf Taxonomies.industries[].id */
   industry: string;
   /** Referenz auf Taxonomies.districts[].id */
   district: string;
-  services: string[];
+  services?: string[];
   address: Address;
   contact: {
     phone?: string;
