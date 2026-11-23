@@ -28,5 +28,18 @@
 	"preview_urls": true,
 	"observability": {
 		"enabled": true
+	},
+	// Einstellungen für Branch-Vorschauen (`wrangler preview` in Workers Builds).
+	// Bindings werden NICHT von oben geerbt und stehen hier deshalb erneut.
+	// WORKER_SELF_REFERENCE fehlt bewusst: OpenNext braucht sie nur für
+	// Revalidierungs-Queues (hier nicht genutzt), und sie würde auf den
+	// Produktions-Worker zeigen.
+	"previews": {
+		"images": {
+			"binding": "IMAGES"
+		},
+		"observability": {
+			"enabled": true
+		}
 	}
 }
