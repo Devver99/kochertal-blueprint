@@ -25,6 +25,10 @@ export const siteConfig = {
    * Suchmaschinen aussperren (Meta-Tag `robots` und Header `X-Robots-Tag`
    * auf allen Seiten). Bleibt an, solange die Seite eine Demo oder
    * Vorschau ist – erst für den echten Livegang auf `false` setzen.
+   *
+   * Auf Cloudflare gilt `headers()` aus next.config.ts nicht für
+   * statische Dateien. Deshalb steht `X-Robots-Tag` zusätzlich in
+   * `public/_headers` – beim Livegang dort ebenfalls entfernen.
    */
   noindex: true,
   /** Hinweis im Footer, solange die Seite eine Demo mit fiktiven Inhalten ist. */

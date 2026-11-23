@@ -1,0 +1,32 @@
+// Cloudflare-Workers-Konfiguration für das Deployment mit @opennextjs/cloudflare.
+// Enthält bewusst keine Konto-ID und keine Tokens: Workers Builds kennt das
+// Konto über die GitHub-Verbindung, lokal meldet `npx wrangler login` an.
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	// Muss exakt dem Worker-Namen im Cloudflare-Dashboard entsprechen.
+	"name": "kochertal-blueprint",
+	"main": ".open-next/worker.js",
+	"compatibility_date": "2026-11-15",
+	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+	"assets": {
+		"directory": ".open-next/assets",
+		"binding": "ASSETS"
+	},
+	"services": [
+		{
+			// Selbstreferenz für den OpenNext-Cache, Name = Worker-Name.
+			"binding": "WORKER_SELF_REFERENCE",
+			"service": "kochertal-blueprint"
+		}
+	],
+	"images": {
+		// Bildoptimierung für next/image
+		"binding": "IMAGES"
+	},
+	// Adresse <worker>.<subdomain>.workers.dev und Vorschau-Links pro Version/Branch
+	"workers_dev": true,
+	"preview_urls": true,
+	"observability": {
+		"enabled": true
+	}
+}

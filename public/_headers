@@ -1,0 +1,12 @@
+# Header für statische Dateien auf Cloudflare (Workers Static Assets).
+# Der Worker – und damit headers() aus next.config.ts – läuft vor diesen
+# Dateien NICHT. Deshalb steht X-Robots-Tag hier zusätzlich.
+#
+# WICHTIG: Gekoppelt an `noindex` in src/config/site.ts. Beim echten
+# Livegang die X-Robots-Tag-Zeile unten ebenfalls entfernen.
+
+/*
+  X-Robots-Tag: noindex, nofollow
+
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable

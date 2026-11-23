@@ -1,3 +1,4 @@
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 import type { NextConfig } from "next";
 import { siteConfig } from "./src/config/site";
 
@@ -27,3 +28,6 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+// Stellt Cloudflare-Bindings (getCloudflareContext) auch in `next dev` bereit.
+initOpenNextCloudflareForDev();
